@@ -1,0 +1,10 @@
+---
+- hosts: all:!*openbsd*
+  sudo: true
+  serial: 10
+
+  tasks:
+    - include: tasks/common-ubuntu.yml
+
+  handlers:
+    - include: handlers/restarts.yml

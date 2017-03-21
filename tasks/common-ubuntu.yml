@@ -1,0 +1,50 @@
+---
+  - include: common.yml
+
+# Always nice to have the root user configured with the right password
+# We keep this at the top
+  - name: Common Ubuntu | Set root password
+    user:
+      name=root
+      password="{{ root_password_ubuntu }}"
+    tags:
+      - password
+
+# These take the inventory names and update the server
+  - name: Common Ubuntu | Hostname | Update the hostname (pt. 1) - hostname cmd
+    hostname:
+     name: "{{ location_name }}-{{inventory_hostname_short}}"
+
+  - name: Common Ubuntu | Hostname | Update the hostname (pt. 2) - (/etc/hostname)
+    copy:
+     content: "{{ location_name }}-{{inventory_hostname_short}}{{'\n'}}"
+     dest: /etc/hostname
+     owner: root
+     group: root
+     mode: 0644
+
+  - name: Common Ubuntu | Hostname | Update the IPv4 hostname (pt. 3) - (/etc/hosts)
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^127.0.0.1{{'\t'}}{{ location_name }}-{{inventory_hostname}}"
+      line: "127.0.0.1{{'\t'}}{{ location_name }}-{{inventory_hostname}}"
+      state: present
+
+  - name: Common Ubuntu | Hostname | Update the IPv6 hostname (pt. 3) - (/etc/hosts)
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^::1{{'\t\t'}}{{ location_name }}-{{inventory_hostname}}"
+      line: "::1{{'\t\t'}}{{ location_name }}-{{inventory_hostname}}"
+      state: present
+
+# Remove this pesky old user
+  - user: name=hlkold state=absent force=yes remove=yes
+    ignore_errors: True
+
+# Maybe try changing it with_items?
+  - user: name={{item}} state=absent force=yes remove=yes
+    ignore_errors: True
+    with_items:
+      - hlkold
+      - hlkolder
+      - hlkreallyold

@@ -1,0 +1,66 @@
+# Just a mix of common services
+# Add your own
+#restart assorted services
+  - name: update timezone
+    command: dpkg-reconfigure --frontend noninteractive tzdata
+
+  - name: restart logstash
+    service: name=logstash state=restarted
+
+  - name: restart nagios
+    service: name=nagios3 state=restarted
+
+  - name: restart nrpe
+    service: name=nagios-nrpe-server state=restarted
+
+  - name: restart openbsd-nrpe
+    service: name=nrpe state=restarted
+
+  - name: restart sshd
+    service: name={{ service_sshd }} state=restarted
+
+  - name: restart apache2
+    service: name=apache2 state=restarted
+
+  - name: restart snmpd
+    service: name=snmpd state=restarted
+
+  - name: restart syslogd
+    service: name=syslogd state=restarted
+
+  - name: restart unbound
+    service: name=unbound state=restarted
+
+  - name: reload nginx
+    action: shell /etc/init.d/nginx reload
+
+  - name: reboot ubuntu
+    command: /sbin/reboot
+
+  - name: restart elasticsearch
+    service: name=elasticsearch state=restarted
+
+  - name: update grub
+    action: shell update-grub
+
+# OpenBSD stuff
+  - name: reload pf
+    action: shell /sbin/pfctl -f /etc/pf.conf
+
+  - name: reload bgpd
+    action: shell /usr/sbin/bgpctl reload
+
+  - name: reload ospfd
+    action: shell /usr/sbin/ospfctl reload
+
+  - name: reload ospf6d
+    action: shell /usr/sbin/ospf6ctl reload
+
+  - name: restart smokeping
+    action: shell service smokeping restart
+
+  - name: reload httpd
+    action: shell /etc/rc.d/httpd reload
+
+  - name: reload relayd
+    action: shell /usr/sbin/relayctl reload

@@ -1,0 +1,4 @@
+---
+# file: group_vars/os_Debian
+service_sshd: ssh
+service_ntpd: ntpd

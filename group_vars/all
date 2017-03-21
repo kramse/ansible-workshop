@@ -1,0 +1,13 @@
+---
+# file: group_vars/all
+# Group vars files are named after the group
+# Try creating your own groups and special group_vars/file
+
+location_name : "mydatacenter"
+country_code : "dk"
+city : "Copenhagen"
+timezone : "Europe/Copenhagen"
+
+# These could use Ansible Vault!
+# This is simple, but insecure
+root_password_ubuntu: henrik42

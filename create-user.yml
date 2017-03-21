@@ -1,0 +1,22 @@
+---
+- hosts: all:!*openbsd*
+  sudo: true
+  serial: 10
+
+# could be uncommented, but more recommended to keep in place and use:
+# ansible ... --skip-tags common
+  tasks:
+  - include: tasks/common-ubuntu.yml
+    tags:
+      - common
+
+  - group: name=hlk state=present
+  - user: name=hlk shell=/bin/bash group=sudo
+
+# if you enable this, and then run again, common would remove it
+# So always a change to see
+#  - group: name=hlkold state=present
+#  - user: name=hlkold shell=/bin/bash group=sudo
+
+  handlers:
+    - include: handlers/restarts.yml

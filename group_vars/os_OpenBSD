@@ -1,0 +1,4 @@
+---
+# file: group_vars/os_OpenBSD
+service_sshd: sshd
+service_ntpd: ntp

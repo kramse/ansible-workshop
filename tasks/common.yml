@@ -1,0 +1,37 @@
+---
+
+  # talk to all hosts just so we can learn about them, and save dynamic group os_OpenBSD etc.
+  - group_by: key=os_{{ ansible_os_family }}
+    tags:
+        - always
+
+  # you could add this in group_vars - may try that
+  # also make sure you allow the same port in firewalls!
+  - lineinfile: dest=/etc/ssh/sshd_config state=present  regexp='Port' line='Port 22'
+    notify: restart sshd
+    tags:
+        - sshd
+
+# I recommend these for internet connected server, turn off passwords!
+# Makes bruteforcers less of a problem, they wont ever get a working login
+
+#  - lineinfile: dest=/etc/ssh/sshd_config state=present  regexp='PubkeyAuthentication' line='PubkeyAuthentication yes'
+#    notify: restart sshd
+#    tags:
+#        - sshd
+
+#  - lineinfile: dest=/etc/ssh/sshd_config state=present  regexp='ChallengeResponseAuthentication' line='ChallengeResponseAuthentication no'
+#    notify: restart sshd
+#    tags:
+#        - sshd
+
+#  - lineinfile: dest=/etc/ssh/sshd_config state=present  regexp='PasswordAuthentication' line='PasswordAuthentication no'
+#    notify: restart sshd
+#    tags:
+#        - sshd
+
+# Ever experienced slow logins over SSH because of reverse DNS? Yup, fix it!
+#  - lineinfile: dest=/etc/ssh/sshd_config state=present  regexp='UseDNS' line='UseDNS no'
+#    notify: restart sshd
+#    tags:
+#        - sshd
