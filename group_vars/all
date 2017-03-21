@@ -11,3 +11,4 @@ timezone : "Europe/Copenhagen"
 # These could use Ansible Vault!
 # This is simple, but insecure
 root_password_ubuntu: henrik42
+root_password_openbsd: henrik42

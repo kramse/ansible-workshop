@@ -1,0 +1,68 @@
+---
+  - include: common.yml
+
+# Always nice to have the root user configured with the right password
+# We keep this at the top
+  - user:
+     name=root
+     password='{{ root_password_openbsd }}'
+    tags:
+      - password
+
+  - name: create dir for root scripts
+    action: file path=/root/bin/ state=directory
+
+  - name: OpenBSD sysctl ddb.panic 0=Do not drop into ddb on a kernel panic
+    sysctl: name=ddb.panic value=0 reload=no sysctl_set=yes
+    tags:
+      - sysctl
+
+  - name: set /etc/localtime
+    file: src=/usr/share/zoneinfo/{{ timezone }} dest=/etc/localtime state=link
+
+  - name: Update the hostname (pt. 1) - hostname cmd
+    command: /bin/hostname {{ location_name }}-{{inventory_hostname_short}}
+
+  - name: Update the hostname (pt. 2) - (/etc/myname)
+    copy: content="{{ location_name }}-{{inventory_hostname_short}}{{'\n'}}"
+     dest=/etc/myname owner=root group=wheel
+
+  - lineinfile: dest=/etc/hosts state=absent regexp='^127.0.0.1'
+  - lineinfile: dest=/etc/hosts state=absent regexp='^::1'
+
+  - name: Update the IPv4 hostname (pt. 3) - (/etc/hosts)
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^127.0.0.1{{'\t'}}localhost {{ location_name }}-{{inventory_hostname}}"
+      line: "127.0.0.1{{'\t'}}localhost {{ location_name }}-{{inventory_hostname}}"
+      state: present
+
+  - name: Update the IPv6 hostname (pt. 3) - (/etc/hosts)
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^::1{{'\t\t'}}localhost {{ location_name }}-{{inventory_hostname}}"
+      line: "::1{{'\t\t'}}localhost {{ location_name }}-{{inventory_hostname}}"
+      state: present
+
+# What should this contain?
+# Perhaps copy one from a default installed OpenBSD and add PKG_PATH
+#  - name: Install a decent root .profile
+#    template: src=roles/common/files/openbsd/profile-openbsd-root dest=/root/.profile owner=root group=wheel mode=0600
+#    tags:
+#      - profile
+
+#  - user:
+#      name=hlkadmin
+#      comment="Henrik Kramshoej"
+#      groups=wheel
+#      append=yes
+#      update_password=always
+#      password='$2a$'
+#    tags:
+#      - users
+
+#  - name: Install Henrik Kramshoej SSH key
+#    template: src=files/ssh/hlk.pub dest=/home/hlk/.ssh/authorized_keys owner=hlk  mode=0600
+#    tags:
+#      - ssh_change_key
+#      - users

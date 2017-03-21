@@ -19,3 +19,4 @@ then you can play with the sample tasks.
 This is not for production use, for example:
 * We use a plain straight-forward approach without real roles
 * Users can quickly edit playbooks and see stuff working
+* They also mess about with the /etc/hosts file
