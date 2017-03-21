@@ -14,6 +14,10 @@ This is not suitable for production, but should be usable for learning Ansible.
 
 then you can play with the sample tasks.
 
+# Requires a couple of servers
+
+We added 4 Ubuntu servers and 1 OpenBSD VM to an Ubuntu laptop running KVM
+
 # Warnings
 
 This is not for production use, for example:
