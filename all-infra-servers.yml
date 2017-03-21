@@ -1,0 +1,10 @@
+---
+- hosts: infra
+  become: true
+  serial: 10
+
+  tasks:
+    - include: tasks/common-openbsd.yml
+
+  handlers:
+    - include: handlers/restarts.yml

@@ -44,6 +44,16 @@
       line: "::1{{'\t\t'}}localhost {{ location_name }}-{{inventory_hostname}}"
       state: present
 
+  - name: Create a template pf.conf
+    template:
+        src=roles/common/files/openbsd/default-pf.conf.j2
+        dest=/etc/pf.conf owner=root group=wheel mode=0600
+    notify:
+        - reload pf
+    tags:
+        - firewall
+        - pf.conf
+
 # What should this contain?
 # Perhaps copy one from a default installed OpenBSD and add PKG_PATH
 #  - name: Install a decent root .profile
