@@ -3,6 +3,7 @@ ansible_ssh_port=22
 
 [openbsd]
 fw-01 ansible_ssh_host=10.0.45.254 ansible_ssh_port=22 ansible_python_interpreter=/usr/local/bin/python
+infra01 ansible_ssh_host=10.0.42.146 ansible_ssh_port=22 ansible_python_interpreter=/usr/local/bin/python
 
 [infrastructure]
 server01     ansible_ssh_host=10.0.42.147
