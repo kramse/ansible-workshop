@@ -1,0 +1,20 @@
+---
+- hosts: all:!*openbsd*
+  become: true
+  serial: 10
+
+# could be uncommented, but more recommended to keep in place and use:
+# ansible ... --skip-tags common
+#  tasks:
+#  - include: tasks/common-ubuntu.yml
+#    tags:
+#      - common
+
+# Select your own value for X
+  - lineinfile: dest=/etc/hosts state=present  regexp='10.0.x.123' line='10.0.x.123 hostnamex'
+    notify: restart sshd
+    tags:
+        - sshd
+
+  handlers:
+    - include: handlers/restarts.yml
