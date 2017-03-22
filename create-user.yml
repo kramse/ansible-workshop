@@ -1,6 +1,6 @@
 ---
 - hosts: all:!*openbsd*
-  sudo: true
+  become: true
   serial: 10
 
 # could be uncommented, but more recommended to keep in place and use:

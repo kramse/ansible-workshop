@@ -8,6 +8,9 @@ country_code : "dk"
 city : "Copenhagen"
 timezone : "Europe/Copenhagen"
 
+dns1: 91.239.100.100
+dns2: 89.233.43.71 
+
 # These could use Ansible Vault!
 # This is simple, but insecure
 root_password_ubuntu: henrik42

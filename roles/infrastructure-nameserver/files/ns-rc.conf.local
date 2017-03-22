@@ -1,0 +1,5 @@
+ntpd_flags="-s"
+snmpd_flags=""
+pkg_scripts="nrpe"
+unbound_flags=""
+syslogd_flags="${syslogd_flags} -a /var/unbound/dev/log"

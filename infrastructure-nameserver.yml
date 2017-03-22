@@ -1,0 +1,105 @@
+---
+
+# this playbook is a more real example of bringing up an unbound recursive server
+# Not all parts are included, sorry
+
+- hosts: nameserver01:nameserver02
+  become: yes
+  vars:
+    grouplist: []
+  pre_tasks:
+  - include: tasks/playbook-start.yml
+  tasks:
+  - include: tasks/common-openbsd.yml
+    tags:
+      - common
+
+# We put server specific files onto server like this: /etc/mygate /etc/hostname.em0
+# This is the OpenBSD network configuration
+  - name: Update hostname and mygate files
+    template: src=roles/infrastructure-nameserver/files/{{ inventory_hostname_short }}/{{ item | basename }} dest=/etc/{{ item | basename }} owner=root group=wheel mode=0600
+    with_fileglob:
+        - roles/infrastructure-nameserver/files/{{ inventory_hostname_short }}/*
+    tags:
+      - network
+
+# Have good NTP and DNS
+  - name: Create ntpd config for time synchronization
+    copy: content='# ntpd configuration file, see ntpd.conf(5)\n# controlled by Ansible\nlisten on *\nservers ntp1.sptime.se\nservers ntp2.sptime.se\nservers ntp3.sptime.se\nservers ntp4.sptime.se\n'
+      dest=/etc/ntpd.conf
+
+  - name: Update DNS resolver information
+    copy: content='# resolv.conf configuration file\n# controlled by Ansible\nlookup file bind\nsearch {{ location_name }}.privatedns.zone\nnameserver {{ dns1 }}\nnameserver {{ dns2 }}\n'
+      dest=/etc/resolv.conf
+
+# Which services to start at boot:
+  - name: Install boot script configuration rc.conf.local
+    template: src=roles/infrastructure-nameserver/files/ns-rc.conf.local dest=/etc/rc.conf.local owner=root group=wheel mode=0644
+
+# Sorry not included
+#  - name: Update firewall PF pf.conf rules
+#    template: src=roles/infrastructure-nameserver/files/pf.conf dest=/etc/pf.conf owner=root group=wheel mode=0600
+#    notify:
+#      - reload pf
+#    tags:
+#      - pf.conf
+
+    # Note: unbound is a bit special, since it needs to download files when booting
+  - name: Update boot script rc.local
+    template: src=roles/infrastructure-nameserver/files/ns-rc.local dest=/etc/rc.local owner=root group=wheel mode=0644
+    tags:
+      - unbound
+
+  - name: Create initial named.cache
+    template: src=roles/infrastructure-nameserver/files/named.cache  dest=/var/unbound/etc/named.cache  owner=root group=wheel mode=0644
+    tags:
+      - unbound
+
+  - name: Create DNSSEC look aside key dlv.isc.org.key
+    template: src=roles/infrastructure-nameserver/files/dlv.isc.org.key dest=/var/unbound/etc/dlv.isc.org.key owner=root group=wheel mode=0644
+    tags:
+      - unbound
+
+  - name: create dir for autotrust root.key
+    action: file path=/var/unbound/etc/autotrust state=directory owner=_unbound group=_unbound mode=0755
+    tags:
+      - unbound
+
+  - name: Get root.key Unbound anchor
+    command: /usr/sbin/unbound-anchor -a "/var/unbound/etc/autotrust/root.key"     creates=/var/unbound/etc/autotrust/root.key
+    tags:
+      - unbound
+
+  - name: Set root.key permissions
+    file: path=/var/unbound/etc/autotrust/root.key owner=_unbound group=wheel mode=0644
+    tags:
+      - unbound
+
+  - name: Setup unbound control
+    command: unbound-control-setup     creates=/var/unbound/etc/unbound_control.key
+    tags:
+      - unbound
+
+# Sorry not included
+#  - name: Create name server unbound.conf
+#    template: src=roles/infrastructure-nameserver/files/unbound.conf dest=/var/unbound/etc/unbound.conf owner=root group=wheel mode=0644
+#    notify:
+#      - restart unbound
+#    tags:
+#      - unbound
+#      - configuration
+
+# configure your own monitoring, Nagios sucks :-D
+#  - name: Install Nagios nrpe.cfg to clients
+#    template: src=files/etc/openbsd-nrpe.cfg  dest=/etc/nrpe.cfg  owner=root group=wheel mode=0644
+#    notify:
+#      - reload nrpe
+#    tags:
+#          - monitoring
+#          - nagios
+
+#  post_tasks:
+#  - include: tasks/playbook-end.yml
+
+  handlers:
+    - include: handlers/restarts.yml
