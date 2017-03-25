@@ -2,9 +2,9 @@
 ansible_ssh_port=22
 
 [infra]
-fw-01 ansible_ssh_host=10.0.45.254 ansible_ssh_port=22 ansible_python_interpreter=/usr/local/bin/python
+#fw-01 ansible_ssh_host=10.0.45.254 ansible_ssh_port=22 ansible_python_interpreter=/usr/local/bin/python
 infra01 ansible_ssh_host=10.0.45.206 ansible_ssh_port=22 ansible_python_interpreter=/usr/local/bin/python
-jump01 ansible_ssh_host=10.0.42.xx
+#jump01 ansible_ssh_host=10.0.42.xx
 
 [nameservers]
 #nameserver01 ansible_ssh_host=10.0.45.206 ansible_ssh_port=22 ansible_python_interpreter=/usr/local/bin/python
@@ -13,5 +13,5 @@ jump01 ansible_ssh_host=10.0.42.xx
 [infrastructure]
 server01     ansible_ssh_host=10.0.45.191
 server02     ansible_ssh_host=10.0.45.199
-#server03     ansible_ssh_host=10.0.42.
-#server04     ansible_ssh_host=10.0.42.
+server03     ansible_ssh_host=10.0.45.197
+server04     ansible_ssh_host=10.0.45.190
