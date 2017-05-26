@@ -11,7 +11,7 @@
       - common
 
   - group: name=hlk state=present
-  - user: name=hlk shell=/bin/bash group=sudo
+  - user: name=hlk shell=/bin/bash groups=hlk,sudo
 
 # if you enable this, and then run again, common would remove it
 # So always a change to see
