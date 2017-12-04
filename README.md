@@ -25,3 +25,6 @@ This is not for production use, for example:
 * Users can quickly edit playbooks and see stuff working
 * They also mess about with the /etc/hosts file
 * The OpenBSD example pf.conf should probably be split into multiple
+
+The presentation about this is in my other repo:
+security-courses/presentations/misc/ansible-workshop
